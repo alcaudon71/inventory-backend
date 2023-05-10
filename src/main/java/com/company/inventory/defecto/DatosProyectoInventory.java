@@ -8,7 +8,7 @@ public class DatosProyectoInventory {
 		/**
 		 * 
 		 *	PROYECTO: 	SpringBoot y Angular. Creando aplicaciones como Fullstack
-		 *	AUTOR:		Alfredo Leal
+		 *	AUTOR:		Alfredo Leal 
 		 *	URL:		https://ust-global.udemy.com/course/spring-boot-y-angular-creando-aplicaciones-como-fullstack/learn/lecture/30918400#overview
 		 * 
 		 */
