@@ -2,7 +2,7 @@ package com.company.inventory.defecto;
 
 public class DatosProyectoInventory {
 
-	public static void main(String[] args) {
+	public static void datos() {
 		// TODO Auto-generated method stub
 
 		/**
