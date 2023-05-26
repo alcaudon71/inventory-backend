@@ -144,4 +144,63 @@ public class CategoryServiceImpl implements ICategoryService {
 		
 	}
 
+	@Override
+	@Transactional
+	public ResponseEntity<CategoryResponseRest> update(Category category, Long id) {
+		// TODO Auto-generated method stub
+		
+		CategoryResponseRest response = new CategoryResponseRest();
+		List<Category> list = new ArrayList<>();
+		
+		try {
+			
+			// Verificamos si existe el id que tenemos que modificar
+			Optional<Category> categorySearch = categoryDao.findById(id);
+			
+			if (categorySearch.isPresent()) {
+				// Actualizamos el registro de categoria
+				categorySearch.get().setName(category.getName());
+				categorySearch.get().setDescription(category.getDescription());
+				
+				Category categoryToUpdate = categoryDao.save(categorySearch.get());
+				
+				// Actualizacion correcta en Dao
+				if (categoryToUpdate != null) {
+					list.add(categoryToUpdate);
+					response.getCategoryResponse().setCategory(list);
+					response.setMetadata("Respuesta ok", "00", "Categoria actualizada");
+				} else {
+					// Error de actualizacion en Dao
+					response.setMetadata("Respuesta nok", "-1", "Categoria no actualizada");
+					ResponseEntity<CategoryResponseRest> respError = 
+												new ResponseEntity<CategoryResponseRest>(response, HttpStatus.BAD_REQUEST);
+					return respError;
+				}
+				
+				
+				
+			} else {
+				response.setMetadata("Respuesta nok", "-1", "Categoria no encontrada");
+				ResponseEntity<CategoryResponseRest> respError = 
+											new ResponseEntity<CategoryResponseRest>(response, HttpStatus.NOT_FOUND);
+				return respError;
+			}
+
+				
+		} catch (Exception e) {
+			
+			response.setMetadata("Respuesta nok", "-1", "Error al actualizar registro");
+			e.getStackTrace();
+			
+			ResponseEntity<CategoryResponseRest> respError = new ResponseEntity<CategoryResponseRest>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+			return respError;
+			
+		}
+		
+		ResponseEntity<CategoryResponseRest> respuesta = new ResponseEntity<CategoryResponseRest>(response, HttpStatus.OK);
+		
+		return respuesta;
+		
+	}
+
 }
