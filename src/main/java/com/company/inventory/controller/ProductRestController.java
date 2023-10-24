@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -135,6 +136,44 @@ public class ProductRestController {
 		
 		// Invocamos al servicio para recuperar todos los productos de la aplicacion 
 		ResponseEntity<ProductResponseRest> response = productService.searchAll();
+		
+		return response;
+		
+	}
+	
+	/**
+	 * Actualizar producto con los nuevos datos proporcionados
+	 * @param 	picture			Nueva imagen asociada al producto
+	 * @param 	name			Nuevo nombre asociado al producto
+	 * @param 	price			Nuevo precio asociado al producto
+	 * @param 	account			Nueva cantidad asociado al producto
+	 * @param 	categoryId		Nueva categoria que debe ser asociada al producto
+	 * @param 	productId		Identificador del producto que debe ser actualizado			
+	 * @return	ResponseEntity	Respuesta con la list de productos actualizada
+	 * @throws IOException
+	 */
+	@PutMapping("products/{id}")
+	public ResponseEntity<ProductResponseRest> update(
+			@RequestParam("picture") MultipartFile picture,		// Estos parametros vienen en el body
+			@RequestParam("name") String name,
+			@RequestParam("price") int price,
+			@RequestParam("account") int account,
+			@RequestParam("categoryId") Long categoryId,
+			@PathVariable Long id ) 							// Este parametro viene en la url 
+					throws IOException {
+		
+		Product product = new Product();
+		
+		// Comprimir foto a formato base64 para almacenar en BBDD
+		byte[] pictureBbdd = Util.compressZLib(picture.getBytes());
+		
+		product.setName(name);
+		product.setAccount(account);
+		product.setPrice(price);
+		product.setPicture(pictureBbdd);
+		
+		// Invocamos al servicio de Actualizar Producto
+		ResponseEntity<ProductResponseRest> response = productService.update(product, categoryId, id);
 		
 		return response;
 		
