@@ -132,4 +132,57 @@ public class ProductServiceImpl implements IProductService {
 		
 	}
 
+	
+	/**
+	 * Busqueda de productos cuyo nombre contega un literal especificado
+	 * @param 	cadena			Literal por el que se busca en el nombre de los productos
+	 * @return  ResponseEntity 	Respuesta con la lista de productos encontrada
+	 */
+	@Override
+	@Transactional (readOnly = true)
+	public ResponseEntity<ProductResponseRest> searchByName(String cadena) {
+		// TODO Auto-generated method stub
+		
+		ProductResponseRest response = new ProductResponseRest();
+		
+		List<Product> list = new ArrayList<>();
+		List<Product> listAux = new ArrayList<>();
+		
+		try {
+			
+			// Buscar Producto por cadena de Nombre
+			listAux = productDao.findByNameContainingIgnoreCase(cadena);
+			
+			if (listAux.size() > 0) {
+			
+				// Recorremos la lista recuperando la info de cada producto con una funcion lambda
+				listAux.stream().forEach( (product) -> {
+					// Cambiamos la imagen del producto del formato BBDD al formato legible por la web
+					byte[] imageBbdd = product.getPicture();
+					byte[] imageDescompressed = Util.decompressZLib(imageBbdd);
+					product.setPicture(imageDescompressed);
+					list.add(product);
+				} );
+
+				// Cargamos la info de la respuesta
+				response.setMetadata("respuesta ok", "00", "Productos encontrados");
+				response.getProductResponse().setProducts(list);
+				
+				
+			} else {
+				response.setMetadata("respuesta nok", "-1", "Productos no encontrados");
+				return new ResponseEntity<ProductResponseRest>(response, HttpStatus.NOT_FOUND);
+			}
+			
+		} catch (Exception e) {
+			e.getStackTrace();
+			response.setMetadata("respuesta nok", "-1", "Error al recuperar productos por literal");
+			return new ResponseEntity<ProductResponseRest>(response, HttpStatus.INTERNAL_SERVER_ERROR); // error 500
+		}
+		
+		return new ResponseEntity<ProductResponseRest>(response, HttpStatus.OK); 
+		
+	}
+
+	
 }

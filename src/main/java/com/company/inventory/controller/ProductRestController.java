@@ -95,4 +95,20 @@ public class ProductRestController {
 		
 	}
 	
+	/**
+	 * Busqueda de Productos cuyo nombre contiene una cadena especificada
+	 * @param 	cadena			Cadena por la que se van a filtrar los nombres de los productos
+	 * @return	ResponseEntity	Respuesta con todos los productos cuyo nombre contiene la cadena especificada
+	 */
+	@GetMapping("products/filter/{cadena}")
+	public ResponseEntity<ProductResponseRest> searchByName(@PathVariable String cadena) {
+		
+		// Invocamos al servicio para recuperar el Producto correspondiente a la cadena
+		ResponseEntity<ProductResponseRest> response = productService.searchByName(cadena);
+		
+		return response;
+		
+	}
+	
+	
 }
