@@ -126,4 +126,18 @@ public class ProductRestController {
 		
 	}
 	
+	/**
+	 * Obtencion de todos los productos existentes en la aplicacion 
+	 * @return	ResponseEntity	Respuesta con todos los productos de la BBDD
+	 */
+	@GetMapping("products")
+	public ResponseEntity<ProductResponseRest> searchByName() {
+		
+		// Invocamos al servicio para recuperar todos los productos de la aplicacion 
+		ResponseEntity<ProductResponseRest> response = productService.searchAll();
+		
+		return response;
+		
+	}
+	
 }
