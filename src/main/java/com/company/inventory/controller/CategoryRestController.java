@@ -53,6 +53,7 @@ public class CategoryRestController {
 	@GetMapping("/categories/{id}")
 	public ResponseEntity<CategoryResponseRest> searchCategoriesById(@PathVariable Long id) {
 		
+		//System.out.println(${app.inicio]);
 		ResponseEntity<CategoryResponseRest> response = service.searchById(id);
 		
 		return response;

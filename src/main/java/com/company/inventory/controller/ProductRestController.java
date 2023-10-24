@@ -4,6 +4,8 @@ import java.io.IOException;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -66,6 +68,28 @@ public class ProductRestController {
 		
 		// Invocamos al servicio de Almacenar Producto
 		ResponseEntity<ProductResponseRest> response = productService.save(product, categoryId);
+		
+		return response;
+		
+	}
+	
+	/**
+	 * Obtener Producto por Id
+	 * @param 	id				Identificador del Producto
+	 * @return 	ResponseEntity	Respuesta con el Producto recuperado
+	 */
+	// endpoint: /api/v1/products/{id}
+	// @PathVariable ---> recoge el endpoint de entrada en formato "Decoded"
+	//                    http://localhost:8080/api/v1/products/abc
+	// @RequestParam ---> recoge el endpoint de entrada en formato "Encoded"
+	//  				  http://localhost:8080/api/v1/products?id=abc
+	@GetMapping("products/{id}")
+	public ResponseEntity<ProductResponseRest> searchById(@PathVariable Long id) {
+		
+		// Invocamos al servicio para recuperar el Producto correspondiente al Id
+		ResponseEntity<ProductResponseRest> response = productService.searchById(id);
+		
+		System.out.println("ProductResponse: " + response.toString() );
 		
 		return response;
 		
