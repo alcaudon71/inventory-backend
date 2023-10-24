@@ -13,4 +13,6 @@ public interface IProductService {
 	
 	public ResponseEntity<ProductResponseRest> searchByName (String cadena);
 	
+	public ResponseEntity<ProductResponseRest> deleteById (Long id);
+	
 }

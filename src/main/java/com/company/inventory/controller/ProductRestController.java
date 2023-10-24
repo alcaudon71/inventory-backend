@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -110,5 +111,19 @@ public class ProductRestController {
 		
 	}
 	
+	/**
+	 * Eliminar producto por id
+	 * @param 	id				Identificador del producto a eliminar	
+	 * @return	ResponseEntity	Respuesta con los metadatos de la ejecucion
+	 */
+	@DeleteMapping("products/{id}")
+	public ResponseEntity<ProductResponseRest> deleteById(@PathVariable Long id) {
+		
+		// Invocamos al servicio para eliminar el Producto correspondiente al Id
+		ResponseEntity<ProductResponseRest> response = productService.deleteById(id);
+		
+		return response;
+		
+	}
 	
 }
