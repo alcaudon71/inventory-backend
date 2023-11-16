@@ -1,5 +1,8 @@
 package com.company.inventory.controller;
 
+import java.io.IOException;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -15,6 +18,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.company.inventory.model.Category;
 import com.company.inventory.response.CategoryResponseRest;
 import com.company.inventory.services.ICategoryService;
+import com.company.inventory.util.CategoryExcelExporter;
+
+import jakarta.servlet.http.HttpServletResponse;
 
 // CrossOrigin ---> Permite el acceso desde una aplicacion FrontEnd externa a nuestro controlador BackEnd
 // Habilitamos el acceso desde localhost:4200, que es el puerto por defecto utilizado por los FrontEnd de Angular
@@ -106,5 +112,34 @@ public class CategoryRestController {
 		return response;
 		
 	}	
+	
+	/**
+	 * Controlador para invocar al servicio de Almacenar categorias en fichero excel
+	 * @param response
+	 * @throws IOException
+	 */
+	@GetMapping("/categories/export/excel")
+	public void exportToExcel(HttpServletResponse response) throws IOException {
+		
+		// Indicamos el tipo de contenido
+		response.setContentType("application/octet-stream");
+		
+		String headerKey = "Content-Disposition";
+		String headerValue = "attachment; filename=result_category.xlsx";  // nombre del archivo excel xml (posterior a 2007)
+		
+		// Establecemos el header con la configuracion establecida
+		response.setHeader(headerKey, headerValue);
+		
+		// Obtenemos la lista de categorias del sistema 
+		ResponseEntity<CategoryResponseRest> categoriesResponse = service.search();
+		
+		List<Category> listaCategorias = categoriesResponse.getBody().getCategoryResponse().getCategory();
+		
+		// Generamos fichero excel con la lista de categorias
+		CategoryExcelExporter excelExporter = new CategoryExcelExporter(listaCategorias);
+		
+		excelExporter.export(response);
+		
+	}
 	
 }

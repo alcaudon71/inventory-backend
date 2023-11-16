@@ -1,6 +1,7 @@
 package com.company.inventory.controller;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -17,7 +18,10 @@ import org.springframework.web.multipart.MultipartFile;
 import com.company.inventory.model.Product;
 import com.company.inventory.response.ProductResponseRest;
 import com.company.inventory.services.IProductService;
+import com.company.inventory.util.ProductExcelExporter;
 import com.company.inventory.util.Util;
+
+import jakarta.servlet.http.HttpServletResponse;
 
 //CrossOrigin ---> Permite el acceso desde una aplicacion FrontEnd externa a nuestro controlador BackEnd
 //Habilitamos el acceso desde localhost:4200, que es el puerto por defecto utilizado por los FrontEnd de Angulars
@@ -176,6 +180,35 @@ public class ProductRestController {
 		ResponseEntity<ProductResponseRest> response = productService.update(product, categoryId, id);
 		
 		return response;
+		
+	}
+
+	/**
+	 * Controlador para invocar al servicio de Almacenar productos en fichero excel
+	 * @param response
+	 * @throws IOException
+	 */
+	@GetMapping("/products/export/excel")
+	public void exportToExcel(HttpServletResponse response) throws IOException {
+		
+		// Indicamos el tipo de contenido
+		response.setContentType("application/octet-stream");
+		
+		String headerKey = "Content-Disposition";
+		String headerValue = "attachment; filename=result_product.xlsx";  // nombre del archivo excel xml (posterior a 2007)
+		
+		// Establecemos el header con la configuracion establecida
+		response.setHeader(headerKey, headerValue);
+		
+		// Obtenemos la lista de categorias del sistema 
+		ResponseEntity<ProductResponseRest> productsResponse = productService.searchAll();
+		
+		List<Product> listaProductos = productsResponse.getBody().getProductResponse().getProducts();
+		
+		// Generamos fichero excel con la lista de productos
+		ProductExcelExporter excelExporter = new ProductExcelExporter(listaProductos);
+		
+		excelExporter.export(response);
 		
 	}
 	
